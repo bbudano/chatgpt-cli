@@ -1,4 +1,4 @@
-package com.example.chatgptcli.dto;
+package com.example.chatgptcli.dto.response;
 
 import java.time.Instant;
 import java.util.List;

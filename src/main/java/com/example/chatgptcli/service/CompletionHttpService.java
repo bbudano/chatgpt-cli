@@ -1,7 +1,7 @@
 package com.example.chatgptcli.service;
 
-import com.example.chatgptcli.dto.CompletionRequest;
-import com.example.chatgptcli.dto.CompletionsResponse;
+import com.example.chatgptcli.dto.request.CompletionRequest;
+import com.example.chatgptcli.dto.response.CompletionsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
