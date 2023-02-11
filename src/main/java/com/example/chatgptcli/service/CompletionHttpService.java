@@ -22,8 +22,9 @@ public class CompletionHttpService {
 
     private final ObjectMapper objectMapper;
 
-    public String requestCompletion(String prompt) throws IOException, InterruptedException {
-        CompletionRequest request = new CompletionRequest("text-davinci-003", prompt, 0.2, 100);
+    public String requestCompletion(String prompt, String model,
+                                    Double temperature, Integer maxTokens) throws IOException, InterruptedException {
+        CompletionRequest request = new CompletionRequest(model, prompt, temperature, maxTokens);
 
         var httpClient = HttpClient.newBuilder()
                 .build();

@@ -4,6 +4,7 @@ import com.example.chatgptcli.service.CompletionHttpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
 import java.io.IOException;
 
@@ -13,9 +14,11 @@ public class ChatgptCommands {
 
     private final CompletionHttpService completionHttpService;
 
-    @ShellMethod("ask")
-    public String ask(String prompt) throws IOException, InterruptedException {
-        return completionHttpService.requestCompletion(prompt);
+    @ShellMethod("Make completion request")
+    public String ask(String prompt, @ShellOption(defaultValue = "text-davinci-003") String model,
+                      @ShellOption(defaultValue = "0.2") Double temperature,
+                      @ShellOption(defaultValue = "100") Integer maxTokens) throws IOException, InterruptedException {
+        return completionHttpService.requestCompletion(prompt, model, temperature, maxTokens);
     }
 
 }
