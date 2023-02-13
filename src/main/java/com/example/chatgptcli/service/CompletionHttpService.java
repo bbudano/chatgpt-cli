@@ -4,6 +4,7 @@ import com.example.chatgptcli.dto.completion.request.CompletionRequest;
 import com.example.chatgptcli.dto.completion.response.CompletionsResponse;
 import com.example.chatgptcli.dto.image.request.ImageRequest;
 import com.example.chatgptcli.dto.image.response.ImageResponse;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import java.net.http.HttpResponse;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@RegisterReflectionForBinding(CompletionsResponse.class)
 public class CompletionHttpService {
 
     @Value("${app-props.chatgpt.api-key}")
@@ -29,50 +29,47 @@ public class CompletionHttpService {
     @Value("${app-props.chatgpt.base-url}")
     private String baseUrl;
 
+    private final HttpClient httpClient;
+
     private final ObjectMapper objectMapper;
 
+    @RegisterReflectionForBinding(CompletionsResponse.class)
     public String requestCompletion(String prompt, String model,
                                     Double temperature, Integer maxTokens) throws IOException, InterruptedException {
-        CompletionRequest request = new CompletionRequest(model, prompt, temperature, maxTokens);
+        CompletionRequest body = new CompletionRequest(model, prompt, temperature, maxTokens);
 
-        var httpClient = HttpClient.newBuilder()
-                .build();
-
-        var httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/completions"))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(request)))
-                .build();
+        var request = buildRequest(baseUrl + "/completions", body);
 
         var response = httpClient
-                .send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                .send(request, HttpResponse.BodyHandlers.ofString());
 
         var chatGptResponse = objectMapper.readValue(response.body(), CompletionsResponse.class);
 
         return chatGptResponse.choices().get(0).text();
     }
 
+    @RegisterReflectionForBinding(ImageResponse.class)
     public String requestImage(String prompt, Integer n, String size,
                                String responseFormat) throws IOException, InterruptedException {
-        ImageRequest request = new ImageRequest(prompt, n, size, responseFormat);
+        ImageRequest body = new ImageRequest(prompt, n, size, responseFormat);
 
-        var httpClient = HttpClient.newBuilder()
-                .build();
-
-        var httpRequest = HttpRequest.newBuilder()
-                .uri(URI.create(baseUrl + "/images/generations"))
-                .header("Content-Type", "application/json")
-                .header("Authorization", "Bearer " + apiKey)
-                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(request)))
-                .build();
+        var request = buildRequest(baseUrl + "/images/generations", body);
 
         var response = httpClient
-                .send(httpRequest, HttpResponse.BodyHandlers.ofString());
+                .send(request, HttpResponse.BodyHandlers.ofString());
 
         var chatGptResponse = objectMapper.readValue(response.body(), ImageResponse.class);
 
         return chatGptResponse.data().get(0).url();
+    }
+
+    private HttpRequest buildRequest(String uri, Object requestBody) throws JsonProcessingException {
+        return HttpRequest.newBuilder()
+                .uri(URI.create(uri))
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer " + apiKey)
+                .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(requestBody)))
+                .build();
     }
 
 }
