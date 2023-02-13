@@ -1,4 +1,4 @@
-package com.example.chatgptcli.dto.request;
+package com.example.chatgptcli.dto.completion.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
