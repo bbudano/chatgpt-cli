@@ -1,4 +1,4 @@
-package com.example.chatgptcli;
+package com.example.chatgptcli.shell;
 
 import com.example.chatgptcli.service.CompletionHttpService;
 import lombok.RequiredArgsConstructor;
