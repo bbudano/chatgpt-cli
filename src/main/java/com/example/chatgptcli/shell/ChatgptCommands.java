@@ -14,10 +14,10 @@ public class ChatgptCommands {
 
     private final CompletionHttpService completionHttpService;
 
-    @ShellMethod("Make completion request")
+    @ShellMethod("Make request to ChatGPT completion API")
     public String ask(String prompt, @ShellOption(defaultValue = "text-davinci-003") String model,
                       @ShellOption(defaultValue = "0.2") Double temperature,
-                      @ShellOption(defaultValue = "100") Integer maxTokens) throws IOException, InterruptedException {
+                      @ShellOption(value = "max-tokens", defaultValue = "100") Integer maxTokens) throws IOException, InterruptedException {
         return completionHttpService.requestCompletion(prompt, model, temperature, maxTokens);
     }
 

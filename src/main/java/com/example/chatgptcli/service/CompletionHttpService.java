@@ -28,8 +28,6 @@ public class CompletionHttpService {
 
     public String requestCompletion(String prompt, String model,
                                     Double temperature, Integer maxTokens) throws IOException, InterruptedException {
-        log.info("Completion request - prompt {} model {} temp {} tokens {}", prompt, model, temperature, maxTokens);
-
         CompletionRequest request = new CompletionRequest(model, prompt, temperature, maxTokens);
 
         var httpClient = HttpClient.newBuilder()
@@ -41,8 +39,6 @@ public class CompletionHttpService {
                 .header("Authorization", "Bearer " + apiKey)
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(request)))
                 .build();
-
-        log.info("request: {}", objectMapper.writeValueAsString(request));
 
         var response = httpClient
                 .send(httpRequest, HttpResponse.BodyHandlers.ofString());
