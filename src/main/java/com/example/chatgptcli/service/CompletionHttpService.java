@@ -4,6 +4,8 @@ import com.example.chatgptcli.dto.request.CompletionRequest;
 import com.example.chatgptcli.dto.response.CompletionsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.aot.hint.annotation.RegisterReflectionForBinding;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +15,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@RegisterReflectionForBinding(CompletionsResponse.class)
 public class CompletionHttpService {
 
     @Value("${app-props.chatgpt.api-key}")
@@ -24,6 +28,8 @@ public class CompletionHttpService {
 
     public String requestCompletion(String prompt, String model,
                                     Double temperature, Integer maxTokens) throws IOException, InterruptedException {
+        log.info("Completion request - prompt {} model {} temp {} tokens {}", prompt, model, temperature, maxTokens);
+
         CompletionRequest request = new CompletionRequest(model, prompt, temperature, maxTokens);
 
         var httpClient = HttpClient.newBuilder()
@@ -35,6 +41,8 @@ public class CompletionHttpService {
                 .header("Authorization", "Bearer " + apiKey)
                 .POST(HttpRequest.BodyPublishers.ofString(objectMapper.writeValueAsString(request)))
                 .build();
+
+        log.info("request: {}", objectMapper.writeValueAsString(request));
 
         var response = httpClient
                 .send(httpRequest, HttpResponse.BodyHandlers.ofString());
