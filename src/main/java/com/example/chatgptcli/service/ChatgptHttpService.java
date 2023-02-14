@@ -21,7 +21,7 @@ import java.net.http.HttpResponse;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class CompletionHttpService {
+public class ChatgptHttpService {
 
     @Value("${app-props.chatgpt.api-key}")
     private String apiKey;
