@@ -45,7 +45,7 @@ public class ChatgptHttpService {
 
         var chatGptResponse = objectMapper.readValue(response.body(), CompletionsResponse.class);
 
-        return chatGptResponse.choices().get(0).text();
+        return chatGptResponse.choices().get(0).text().replace("\n", "");
     }
 
     @RegisterReflectionForBinding(ImageResponse.class)
